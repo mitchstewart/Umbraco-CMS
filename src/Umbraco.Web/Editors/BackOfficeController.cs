@@ -358,6 +358,14 @@ namespace Umbraco.Web.Editors
                             {
                                 "xmlDataIntegrityBaseUrl", Url.GetUmbracoApiServiceBaseUrl<XmlDataIntegrityController>(
                                     controller => controller.CheckContentXmlTable())
+                            },
+                            {
+                                "facadeStatusBaseUrl", Url.GetUmbracoApiServiceBaseUrl<FacadeStatusController>(
+                                    controller => controller.GetFacadeStatusUrl())
+                            },
+                            {
+                               "nuCacheStatusBaseUrl", Url.GetUmbracoApiServiceBaseUrl<NuCacheStatusController>(
+                                   controller => controller.GetStatus())
                             }
                         }
                     },
