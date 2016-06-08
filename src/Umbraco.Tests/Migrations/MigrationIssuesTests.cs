@@ -16,8 +16,8 @@ namespace Umbraco.Tests.Migrations
         [Test, Ignore("TODO: Ask stephan if he knows why this fails")]
         public void Issue8370Test()
         {
-            // fixme maybe we need to create some content?
-            // yes otherwise cannot get it to fail!
+            // make sure to create some content,
+            // otherwise cannot get it to fail!
 
             var n = new NodeDto
             {
