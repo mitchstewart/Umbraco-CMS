@@ -78,16 +78,13 @@ namespace Umbraco.Tests.TestHelpers
 
             //reset settings
             SettingsForTests.Reset();
-            UmbracoContext.Current = null;
             TestHelper.CleanContentDirectories();
             TestHelper.CleanUmbracoSettingsConfig();
             //reset the app context, this should reset most things that require resetting like ALL resolvers
             ApplicationContext.Current.DisposeIfDisposable();
             ApplicationContext.Current = null;
             ResetPluginManager();
-
             Container.Dispose();
-
         }
 
         protected virtual void ConfigureContainer()
