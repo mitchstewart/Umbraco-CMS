@@ -1,11 +1,9 @@
 using System;
 using System.Xml;
 using System.Xml.Serialization;
-using Umbraco.Core;
-using Umbraco.Core.Configuration;
 using Umbraco.Core.Models.PublishedContent;
+using Umbraco.Core.PropertyEditors;
 using Umbraco.Core.Xml;
-using Umbraco.Web.Models;
 
 namespace Umbraco.Web.PublishedCache.XmlPublishedCache
 {
@@ -17,8 +15,10 @@ namespace Umbraco.Web.PublishedCache.XmlPublishedCache
 	[XmlType(Namespace = "http://umbraco.org/webservices/")]
 	internal class XmlPublishedProperty : PublishedPropertyBase
 	{
-		private readonly string _xmlValue; // the raw, xml node value
-	    private readonly Lazy<object> _sourceValue;
+		private readonly string _sourceValue; // the raw, xml node value
+
+        // fixme - copy v6 optimizations here!
+	    private readonly Lazy<object> _interValue;
         private readonly Lazy<object> _objectValue;
         private readonly Lazy<object> _xpathValue;
 	    private readonly bool _isPreviewing;
@@ -26,43 +26,40 @@ namespace Umbraco.Web.PublishedCache.XmlPublishedCache
         /// <summary>
         /// Gets the raw value of the property.
         /// </summary>
-        public override object DataValue { get { return _xmlValue; } }
+        public override object SourceValue => _sourceValue;
 
-        // in the Xml cache, everything is a string, and to have a value
+	    // in the Xml cache, everything is a string, and to have a value
         // you want to have a non-null, non-empty string.
-	    public override bool HasValue 
-        {
-	        get { return _xmlValue.Trim().Length > 0; }
-	    }
+	    public override bool HasValue => _sourceValue.Trim().Length > 0;
 
-        public override object Value { get { return _objectValue.Value; } }
-        public override object XPathValue { get { return _xpathValue.Value; } }
+	    public override object Value => _objectValue.Value;
+	    public override object XPathValue => _xpathValue.Value;
 
-		public XmlPublishedProperty(PublishedPropertyType propertyType, bool isPreviewing, XmlNode propertyXmlData)
+	    public XmlPublishedProperty(PublishedPropertyType propertyType, bool isPreviewing, XmlNode propertyXmlData)
             : this(propertyType, isPreviewing)
 		{
 		    if (propertyXmlData == null)
-		        throw new ArgumentNullException("propertyXmlData", "Property xml source is null");
-		    _xmlValue = XmlHelper.GetNodeValue(propertyXmlData);
+		        throw new ArgumentNullException(nameof(propertyXmlData), "Property xml source is null");
+		    _sourceValue = XmlHelper.GetNodeValue(propertyXmlData);
         }
 
         public XmlPublishedProperty(PublishedPropertyType propertyType, bool isPreviewing, string propertyData)
             : this(propertyType, isPreviewing)
         {
             if (propertyData == null)
-                throw new ArgumentNullException("propertyData");
-            _xmlValue = propertyData;
+                throw new ArgumentNullException(nameof(propertyData));
+            _sourceValue = propertyData;
         }
 
         public XmlPublishedProperty(PublishedPropertyType propertyType, bool isPreviewing)
-            : base(propertyType)
+            : base(propertyType, PropertyCacheLevel.Unknown) // cache level is ignored
         {
-            _xmlValue = string.Empty;
+            _sourceValue = string.Empty;
             _isPreviewing = isPreviewing;
 
-            _sourceValue = new Lazy<object>(() => PropertyType.ConvertDataToSource(_xmlValue, _isPreviewing));
-            _objectValue = new Lazy<object>(() => PropertyType.ConvertSourceToObject(_sourceValue.Value, _isPreviewing));
-            _xpathValue = new Lazy<object>(() => PropertyType.ConvertSourceToXPath(_sourceValue.Value, _isPreviewing));
+            _interValue = new Lazy<object>(() => PropertyType.ConvertSourceToInter(_sourceValue, _isPreviewing));
+            _objectValue = new Lazy<object>(() => PropertyType.ConvertInterToObject(PropertyCacheLevel.Unknown, _interValue.Value, _isPreviewing));
+            _xpathValue = new Lazy<object>(() => PropertyType.ConvertInterToXPath(PropertyCacheLevel.Unknown, _interValue.Value, _isPreviewing));
         }
 	}
 }

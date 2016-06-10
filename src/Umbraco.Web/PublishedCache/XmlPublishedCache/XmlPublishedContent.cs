@@ -322,7 +322,7 @@ namespace Umbraco.Web.PublishedCache.XmlPublishedCache
 	        }
 	    }
 
-		public override ICollection<IPublishedProperty> Properties
+		public override IEnumerable<IPublishedProperty> Properties
 		{
 			get
 			{
