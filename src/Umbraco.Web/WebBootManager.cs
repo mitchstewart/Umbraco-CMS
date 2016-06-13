@@ -509,7 +509,7 @@ namespace Umbraco.Web
 
             UrlProviderResolver.Current = new UrlProviderResolver(
                 Container, ProfilingLogger.Logger,
-                //typeof(AliasUrlProvider), // not enabled by default
+                    //typeof(AliasUrlProvider), // not enabled by default
                     typeof(DefaultUrlProvider),
                     typeof(CustomRouteUrlProvider)
                 );
@@ -519,14 +519,13 @@ namespace Umbraco.Web
             ContentFinderResolver.Current = new ContentFinderResolver(
                 Container, ProfilingLogger.Logger,
                 // all built-in finders in the correct order, devs can then modify this list
-                // on application startup via an application event handler.
+                // on application startup, via an application event handler.
                 typeof(ContentFinderByPageIdQuery),
                 typeof(ContentFinderByNiceUrl),
                 typeof(ContentFinderByIdPath),
                 typeof(ContentFinderByNiceUrlAndTemplate),
                 typeof(ContentFinderByProfile),
                 typeof(ContentFinderByUrlAlias)
-
             );
 
             SiteDomainHelperResolver.Current = new SiteDomainHelperResolver(Container, typeof(SiteDomainHelper));
