@@ -17,11 +17,11 @@ namespace Umbraco.Web.PublishedCache.XmlPublishedCache
 	{
 		private readonly string _sourceValue; // the raw, xml node value
 
-        // fixme - copy v6 optimizations here!
-	    private readonly Lazy<object> _interValue;
-        private readonly Lazy<object> _objectValue;
-        private readonly Lazy<object> _xpathValue;
-	    private readonly bool _isPreviewing;
+        // the xml cache does not need to implement XPath value, really
+        // as for the rest... we're single threaded here, keep it simple
+        private object _objectValue;
+        private bool _objectValueComputed;
+        private readonly bool _isPreviewing;
 
         /// <summary>
         /// Gets the raw value of the property.
@@ -32,10 +32,27 @@ namespace Umbraco.Web.PublishedCache.XmlPublishedCache
         // you want to have a non-null, non-empty string.
 	    public override bool HasValue => _sourceValue.Trim().Length > 0;
 
-	    public override object Value => _objectValue.Value;
-	    public override object XPathValue => _xpathValue.Value;
+	    public override object Value
+	    {
+	        get
+	        {
+                // NOT caching the source (intermediate) value since we'll never need it
+                // everything in Xml cache in v7 is per-request anyways
+                // also, properties should not be shared between requests and therefore
+                // are single threaded, so the following code should be safe & fast
 
-	    public XmlPublishedProperty(PublishedPropertyType propertyType, bool isPreviewing, XmlNode propertyXmlData)
+                if (_objectValueComputed) return _objectValue;
+                var inter = PropertyType.ConvertSourceToInter(_sourceValue, _isPreviewing);
+                // initial reference cache level always is .Content
+                _objectValue = PropertyType.ConvertInterToObject(PropertyCacheLevel.Content, inter, _isPreviewing);
+                _objectValueComputed = true;
+                return _objectValue;
+            }
+        }
+
+        public override object XPathValue { get { throw new NotImplementedException(); } }
+
+        public XmlPublishedProperty(PublishedPropertyType propertyType, bool isPreviewing, XmlNode propertyXmlData)
             : this(propertyType, isPreviewing)
 		{
 		    if (propertyXmlData == null)
@@ -56,10 +73,6 @@ namespace Umbraco.Web.PublishedCache.XmlPublishedCache
         {
             _sourceValue = string.Empty;
             _isPreviewing = isPreviewing;
-
-            _interValue = new Lazy<object>(() => PropertyType.ConvertSourceToInter(_sourceValue, _isPreviewing));
-            _objectValue = new Lazy<object>(() => PropertyType.ConvertInterToObject(PropertyCacheLevel.Unknown, _interValue.Value, _isPreviewing));
-            _xpathValue = new Lazy<object>(() => PropertyType.ConvertInterToXPath(PropertyCacheLevel.Unknown, _interValue.Value, _isPreviewing));
         }
 	}
 }
