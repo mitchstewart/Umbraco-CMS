@@ -37,6 +37,7 @@ using Umbraco.Core.Services;
 using Umbraco.Web.Services;
 using Umbraco.Web.Editors;
 using Umbraco.Core.DependencyInjection;
+using Umbraco.Core.Persistence;
 using Umbraco.Core.Persistence.UnitOfWork;
 using Umbraco.Core.Services.Changes;
 using Umbraco.Core.Strings;
@@ -345,6 +346,10 @@ namespace Umbraco.Web
             // register the facade accessor - the "current" facade is in the umbraco context
             container.RegisterSingleton<IFacadeAccessor, UmbracoContextFacadeAccessor>();
 
+            // register the umbraco database accessor
+            // have to use the hybrid thing...
+            container.RegisterSingleton<IUmbracoDatabaseAccessor, HybridUmbracoDatabaseAccessor>();
+
             // register the XML facade service
             //container.RegisterSingleton<IFacadeService>(factory => new PublishedCache.XmlPublishedCache.FacadeService(
             //    factory.GetInstance<ServiceContext>(),
@@ -370,7 +375,8 @@ namespace Umbraco.Web
             container.RegisterSingleton<UmbracoHelper>();
 
             // replace some services
-            container.Register<IEventMessagesFactory, ScopeContextEventMessagesFactory>();
+            container.RegisterSingleton<IEventMessagesFactory, DefaultEventMessagesFactory>();
+            container.RegisterSingleton<IEventMessagesAccessor, HybridEventMessagesAccessor>();
             container.RegisterSingleton<IApplicationTreeService, ApplicationTreeService>();
             container.RegisterSingleton<ISectionService, SectionService>();
 

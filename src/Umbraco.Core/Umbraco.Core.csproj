@@ -211,7 +211,6 @@
     <Compile Include="DatabaseContext.cs" />
     <Compile Include="DataTableExtensions.cs" />
     <Compile Include="DateTimeExtensions.cs" />
-    <Compile Include="DefaultScopeContextAdapter.cs" />
     <Compile Include="DelegateExtensions.cs" />
     <Compile Include="DependencyInjection\ConfigurationCompositionRoot.cs" />
     <Compile Include="DependencyInjection\CoreModelMappersCompositionRoot.cs" />
@@ -234,6 +233,7 @@
     <Compile Include="Events\EventMessage.cs" />
     <Compile Include="Events\EventMessages.cs" />
     <Compile Include="Events\ExportEventArgs.cs" />
+    <Compile Include="Events\IEventMessagesAccessor.cs" />
     <Compile Include="Events\IEventMessagesFactory.cs" />
     <Compile Include="Events\ImportEventArgs.cs" />
     <Compile Include="Events\ImportPackageEventArgs.cs" />
@@ -260,14 +260,15 @@
     </Compile>
     <Compile Include="Models\DictionaryItemExtensions.cs" />
     <Compile Include="Models\PublishedContent\IPublishedFragment.cs" />
+    <Compile Include="Persistence\IUmbracoDatabaseAccessor.cs" />
     <Compile Include="Persistence\Migrations\Upgrades\TargetVersionEight\AddContentNuTable.cs" />
     <Compile Include="Persistence\Migrations\Upgrades\TargetVersionEight\RefactorXmlColumns.cs" />
+    <Compile Include="Persistence\ThreadStaticUmbracoDatabaseAccessor.cs" />
     <Compile Include="Plugins\HideFromTypeFinderAttribute.cs" />
     <Compile Include="HttpContextExtensions.cs" />
     <Compile Include="IApplicationEventHandler.cs" />
     <Compile Include="IDisposeOnRequestEnd.cs" />
     <Compile Include="DependencyInjection\LightInjectExtensions.cs" />
-    <Compile Include="IScopeContextAdapter.cs" />
     <Compile Include="ListExtensions.cs" />
     <Compile Include="Logging\AsyncForwardingAppenderBase.cs" />
     <Compile Include="Logging\LoggingEventContext.cs" />
