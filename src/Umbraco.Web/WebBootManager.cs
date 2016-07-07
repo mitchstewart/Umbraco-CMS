@@ -518,7 +518,8 @@ namespace Umbraco.Web
                     typeof(CustomRouteUrlProvider)
                 );
 
-            ContentLastChanceFinderResolver.Current = new ContentLastChanceFinderResolver(Container, typeof(ContentFinderByLegacy404));
+            ContentLastChanceFinderResolver.Current = new ContentLastChanceFinderResolver(Container);
+            Container.Register<IContentLastChanceFinder, ContentFinderByLegacy404>();
 
             ContentFinderResolver.Current = new ContentFinderResolver(
                 Container, ProfilingLogger.Logger,
@@ -532,7 +533,8 @@ namespace Umbraco.Web
                 typeof(ContentFinderByUrlAlias)
             );
 
-            SiteDomainHelperResolver.Current = new SiteDomainHelperResolver(Container, typeof(SiteDomainHelper));
+            SiteDomainHelperResolver.Current = new SiteDomainHelperResolver(Container);
+            Container.Register<ISiteDomainHelper, SiteDomainHelper>();
 
             ThumbnailProvidersResolver.Current = new ThumbnailProvidersResolver(
                 Container, ProfilingLogger.Logger,
@@ -542,7 +544,8 @@ namespace Umbraco.Web
                 ServiceProvider, ProfilingLogger.Logger,
                 PluginManager.ResolveImageUrlProviders());
 
-            CultureDictionaryFactoryResolver.Current = new CultureDictionaryFactoryResolver(Container, typeof(DefaultCultureDictionaryFactory));
+            CultureDictionaryFactoryResolver.Current = new CultureDictionaryFactoryResolver(Container);
+            Container.Register<ICultureDictionaryFactory, DefaultCultureDictionaryFactory>();
         }
 
         /// <summary>
