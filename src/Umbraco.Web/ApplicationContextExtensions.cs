@@ -27,4 +27,5 @@ namespace Umbraco.Web
             HttpRuntime.UnloadAppDomain();
 		}
 	}
+    //Added a little comment here
 }
